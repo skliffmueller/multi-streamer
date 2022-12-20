@@ -9,9 +9,6 @@ RUN apk add --update pcre ffmpeg
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /usr/local/nginx /usr/local/nginx
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
-
 EXPOSE 80 443 1935
 
 
