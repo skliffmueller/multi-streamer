@@ -12,7 +12,7 @@ RUN apt-get -y update; \
     cd $(find . -maxdepth 1 -type d -name "nginx*") && \
     ls -ahl && \
     git clone https://github.com/arut/nginx-rtmp-module.git && \
-    sed -i "s|common_configure_flags := \\\|common_configure_flags := \\\--add-module=$(cd  nginx-rtmp-module && pwd) --with-debug \\\|" debian/rules && \
+    sed -i "s|common_configure_flags := \\\|common_configure_flags := \\\--add-module=$(cd  nginx-rtmp-module && pwd) \\\|" debian/rules && \
     cat debian/rules && echo "^^" && \
     apt-get -y build-dep nginx && \
     dpkg-buildpackage -b && \
