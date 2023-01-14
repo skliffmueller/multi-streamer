@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.PollItem-fazeFlipPositive, .PollItem-fazeFlipNegative {
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+.PollItem-fazeFlipPositive {
+  animation-name: fazeFlipPositive;
+}
+
+.PollItem-fazeFlipNegative {
+  animation-name: fazeFlipNegative;
+}
+
+@keyframes fazeFlipPositive {
+  0% {transform:skew(0, 0);opacity:1;}
+  45% {transform:skew(0, 0);opacity:1;}
+  50% {transform:skew(30deg, 30deg);opacity:0;}
+
+  95% {transform:skew(30deg, 30deg);opacity:0;}
+  100% {transform:skew(0, 0);opacity:1;}
+}
+@keyframes fazeFlipNegative {
+  0% {transform:skew(30deg, 30deg);opacity:0;}
+  45% {transform:skew(30deg, 30deg);opacity:0;}
+  50% {transform:skew(0, 0);opacity:1;}
+
+  95% {transform:skew(0, 0);opacity:1;}
+  100% {transform:skew(30deg, 30deg);opacity:0;}
+}
+
+html, body {
+  margin: 0 auto;
+}
