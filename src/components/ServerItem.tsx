@@ -52,7 +52,7 @@ function ServerItem(application: StreamApplication) {
             /* clipboard write failed */
           });
     }
-    const videoSrc = "/hls/" + application.name.split('/').pop();
+    const videoSrc = "/hls/" + application.name.split('/').pop() + ".m3u8";
     return (
         <div className="text-gray-100 my-1 py-1 px-3 border w-64">
             <Player src={videoSrc} />
