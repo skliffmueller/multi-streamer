@@ -38,7 +38,7 @@ function doubleZero(value: number) {
 function ServerItem(application: StreamApplication) {
     const channels = application.channels == 1 ? "Mono" : "Stereo";
     return (
-        <div className="text-gray-100 py-1 px-3 border w-64">
+        <div className="text-gray-100 my-1 py-1 px-3 border w-64">
             <h1 className="flex justify-between items-center  text-lg font-bold">
                 {application.name}
                 {

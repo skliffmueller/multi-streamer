@@ -7,7 +7,7 @@ import StreamProvider from "../providers/stream";
 
 function App() {
     return (
-        <StreamProvider statsUrl={"/stats"}>
+        <StreamProvider statsUrl={"http://192.168.1.201/stats"}>
             <Routes>
                 <Route path="/" element={<Home />} />
             </Routes>
