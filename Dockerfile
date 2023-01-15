@@ -34,7 +34,7 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80 443 1935
 
-RUN mkdir /var/www
+RUN ls /var/www
 
 COPY ./dist /var/www
 COPY ./etc/nginx /etc/nginx
