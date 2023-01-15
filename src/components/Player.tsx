@@ -6,16 +6,38 @@ function Player(props: { src: string }) {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
+        let timeout: NodeJS.Timeout;
         if(videoRef.current) {
-            videojs(videoRef.current, {
-                controls: false,
-                playsinline: true,
-                autoplay: 'muted',
-                children: ['MediaLoader','BigPlayButton','ErrorDisplay'],
-            }, function() {
-                console.log('player',  this);
-                // this.play();
-            });
+            const checkSrc = () => {
+                fetch(props.src)
+                    .then((res) => {
+                        if(videoRef.current && res.status >= 200 && res.status < 300) {
+                            videojs(videoRef.current, {
+                                controls: false,
+                                playsinline: true,
+                                autoplay: 'muted',
+                                children: ['MediaLoader','BigPlayButton','ErrorDisplay'],
+                            }, function() {
+                                console.log('player',  this);
+                                // this.play();
+                            });
+                        } else {
+                            timeout = setTimeout(() => {
+                                checkSrc();
+                            }, 2000);
+                        }
+
+                    })
+                    .catch(() => {
+                        timeout = setTimeout(() => {
+                            checkSrc();
+                        }, 2000);
+                    });
+            }
+            checkSrc();
+        }
+        return () => {
+            clearTimeout(timeout);
         }
     }, []);
     return (

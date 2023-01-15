@@ -11,7 +11,7 @@ function Home() {
 
     return (
         <div className="w-screen text-gray-100 flex flex-col items-center justify-center">
-            {state.applications.map((application) => <ServerItem {...application}/>)}
+            {state.applications.filter((app) => (!app.name.match(/^\/hls/))).map((application) => <ServerItem {...application}/>)}
         </div>
     );
 }

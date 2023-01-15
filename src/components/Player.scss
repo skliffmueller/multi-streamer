@@ -25,6 +25,9 @@
     background: rgba(0,0,0,0.4)
 }
 .vjs-modal-dialog-description {
+    display: none;
+}
+.vjs-modal-dialog-content {
     text-align: center;
 }
 button.vjs-big-play-button {

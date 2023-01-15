@@ -4,7 +4,7 @@ FROM ubuntu:xenial
 # if these are done in separate RUN commands they get put into diff. layers and removing later has no effect apparently
 # as a result, all build/remove commands are pushed into one RUN command, the docker image goes from 808 MB to 300 by doing so
 RUN apt-get -y update; \
-    apt-get -y install software-properties-common dpkg-dev git; \
+    apt-get -y install software-properties-common dpkg-dev git ffmpeg; \
     add-apt-repository -y ppa:nginx/stable; \
     sed -i '/^#.* deb-src /s/^#//' /etc/apt/sources.list.d/nginx-ubuntu-stable-xenial.list; \
     apt-get -y update; \
