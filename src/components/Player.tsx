@@ -19,7 +19,7 @@ function Player(props: { src: string }) {
                                 children: ['MediaLoader','BigPlayButton','ErrorDisplay'],
                             }, function() {
                                 console.log('player',  this);
-                                // this.play();
+                                this.play();
                             });
                         } else {
                             timeout = setTimeout(() => {
