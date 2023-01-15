@@ -1,6 +1,8 @@
 
 import React, {ReactNode} from 'react';
 import { StreamApplication } from '../providers/stream';
+import { DocumentDuplicateIcon } from "@heroicons/react/24/solid";
+import Player from './Player';
 
 const KB = 1024;
 const MB = KB * 1024;
@@ -37,10 +39,25 @@ function doubleZero(value: number) {
 }
 function ServerItem(application: StreamApplication) {
     const channels = application.channels == 1 ? "Mono" : "Stereo";
+    const {
+        hostname
+    } = window.location;
+
+    const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        const element = event.target as HTMLLinkElement;
+        navigator.clipboard.writeText(element.getAttribute('href') || "").then(() => {
+            /* clipboard successfully set */
+          }, () => {
+            /* clipboard write failed */
+          });
+    }
+    const videoSrc = "/hls/" + application.name.split('/').pop();
     return (
         <div className="text-gray-100 my-1 py-1 px-3 border w-64">
+            <Player src={videoSrc} />
             <h1 className="flex justify-between items-center  text-lg font-bold">
-                {application.name}
+                <a className="underline" href={`rtmp://${hostname}:1935${application.name}`} onClick={onClick}>{application.name} <DocumentDuplicateIcon className="inline w-4 h-4" /></a>
                 {
                     application.publishing
                         ? <div className="text-sm bg-red-600 rounded inline-block px-1">LIVE</div>

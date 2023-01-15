@@ -1,6 +1,7 @@
 
 import React, {ReactNode} from 'react';
 import { useStreamContext } from '../providers/stream';
+import Player from './Player';
 import ServerItem from './ServerItem';
 
 

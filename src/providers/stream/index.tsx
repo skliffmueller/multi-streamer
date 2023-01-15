@@ -48,7 +48,7 @@ const StreamProvider = (props: StreamProviderProps) => {
 
     
     useEffect(() => {
-        let timeout;
+        let timeout: NodeJS.Timeout;
 
         const sendRequest = () => {
             fetch(statsUrl)
