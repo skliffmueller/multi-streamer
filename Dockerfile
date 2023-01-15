@@ -34,7 +34,10 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80 443 1935
 
+RUN mkdir /var/www
+
+COPY ./dist /var/www
 COPY ./etc/nginx /etc/nginx
-VOLUME ["/etc/nginx", "/var/cache/nginx"]
+VOLUME ["/etc/nginx", "/var/cache/nginx", "/var/www"]
 
 CMD ["nginx", "-g", "daemon off;"]

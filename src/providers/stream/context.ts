@@ -1,24 +1,22 @@
 import React, {createContext, MutableRefObject, RefObject, useContext} from "react";
 
-type StreamChannel = {
+export type StreamApplication = {
     name: string;
     time: number;
     bytesIn: number;
     bytesOut: number;
+
     width: number;
     height: number;
     frameRate: number;
     videoCodec: string;
+
     sampleRate: number;
     channels: number;
     audioCodec: string;
+    
     publishing: boolean;
     active: boolean;
-};
-
-type StreamApplication = {
-    name: string;
-    live: StreamChannel[];
 };
 
 export type StreamContextState = {
@@ -26,7 +24,7 @@ export type StreamContextState = {
     naccepted: number;
     bytesIn: number;
     bytesOut: number;
-    server: StreamApplication[];
+    applications: StreamApplication[];
 }
 
 interface StreamContextStruct {
@@ -41,7 +39,7 @@ export const StreamContext = createContext<StreamContextStruct>({
         naccepted: 0,
         bytesIn: 0,
         bytesOut: 0,
-        server: [],
+        applications: [],
     },
 });
 
