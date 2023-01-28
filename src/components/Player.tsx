@@ -39,7 +39,8 @@ function Player(props: { src: string }) {
         return () => {
             clearTimeout(timeout);
         }
-    }, []);
+    }, [props.src]);
+    
     return (
         <video ref={videoRef} width="230">
             <source src={props.src} type="application/x-mpegURL" />

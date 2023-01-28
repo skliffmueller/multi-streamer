@@ -47,8 +47,10 @@ function ServerItem(application: StreamApplication) {
         event.preventDefault();
         const element = event.target as HTMLLinkElement;
         navigator.clipboard.writeText(element.getAttribute('href') || "").then(() => {
+            console.log('success');
             /* clipboard successfully set */
           }, () => {
+            console.log('failure');
             /* clipboard write failed */
           });
     }
