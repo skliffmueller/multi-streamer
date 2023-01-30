@@ -43,12 +43,14 @@ RUN crontab -l | { cat; echo "0 12 * * * /usr/local/bin/acme-nginx -d live.cppth
 
 EXPOSE 80 443 1935
 
+RUN mkdir /var/recordings && chown -R nobody:root /var/recordings && chmod -R 755 /var/recordings
+
 COPY ./dist /var/www/html
 COPY ./etc/nginx /etc/nginx
 COPY start.sh /
 
 RUN chmod 755 /start.sh
 
-VOLUME ["/etc/nginx", "/var/cache/nginx", "/etc/ssl", "/var/www"]
+VOLUME ["/etc/nginx", "/var/cache/nginx", "/etc/ssl", "/var/www", "/var/recordings"]
 
 ENTRYPOINT ["/bin/sh", "/start.sh"]
