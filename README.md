@@ -37,3 +37,18 @@ rtmp://serverhostname.net:1935/live/<whatevername>
 ## Multi-stream push
 
 You can push a stream to `rtmp://serverhostname.net:1935/stream` and it will broadcast to multiple streams that are configured in the `nginx.conf`. See `application stream` in `nginx.conf`
+
+## Directory map in dockerfile
+
+/etc/nginx - nginx configs
+/var/recordings - Volume for recordings
+/var/app - Server location
+/var/www/html - Client
+/var/www/html/thumbs/ - Thumbnails
+/var/www/html/recordings/ - Recordings
+/var/scripts - Shell scripts
+
+    ./scripts - Shell scripts
+    ./server - Node js API server
+    ./dist - Client application
+

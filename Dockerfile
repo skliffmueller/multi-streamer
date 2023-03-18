@@ -35,22 +35,44 @@ RUN add-apt-repository -y ppa:nginx/stable && \
     rm -rf ./*nginx* && \
     pip install acme-nginx
 
+RUN apt-get update && \
+    apt-get -y install curl gnupg && \
+    curl -sL https://deb.nodesource.com/setup_16.x  | bash - && \
+    apt-get -y install nodejs
+
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
 RUN crontab -l | { cat; echo "0 12 * * * /usr/local/bin/acme-nginx -d live.cppthink.org"; } | crontab -
 
-EXPOSE 80 443 1935
+EXPOSE 80 443 1935 3000
 
-RUN mkdir /var/recordings && chown -R nobody:root /var/recordings && chmod -R 755 /var/recordings
+RUN mkdir /var/www/html/videos && \
+    chown -R nobody:root /var/www/html/videos && \
+    chmod -R 755 /var/www/html/videos && \
+    mkdir /var/www/html/thumbs && \
+    chown -R nobody:root /var/www/html/thumbs && \
+    chmod -R 755 /var/www/html/thumbs && \
+    mkdir /var/app && \
+    chmod -R 755 /var/app && \
+    mkdir /var/scripts && \
+    chown -R nobody:root /var/scripts && \
+    chmod -R 755 /var/scripts
+
+
+
+COPY ./server /var/app
+
+RUN cd /var/app && npm install
 
 COPY ./dist /var/www/html
 COPY ./etc/nginx /etc/nginx
+COPY ./scripts /var/scripts
 COPY start.sh /
 
-RUN chmod 755 /start.sh
+RUN chmod 755 /start.sh && chmod -R 755 /var/scripts
 
-VOLUME ["/etc/nginx", "/var/cache/nginx", "/etc/ssl", "/var/www", "/var/recordings"]
+VOLUME ["/etc/ssl", "/var/www/html/thumbs", "/var/www/html/videos", "/var/app/data"]
 
 ENTRYPOINT ["/bin/sh", "/start.sh"]

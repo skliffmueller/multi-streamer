@@ -1,0 +1,11 @@
+{
+  "db": "users",
+  "users": [
+    {
+      "username": "tickytack",
+      "password": "Fwymbef9I4kEg/KBhDU26uLZibF+DE2fiQoSMBm25fF1vItGDs8O5N/0zvox62DZ93kQjmC9ljnm6cEJxTvBTx52cYDgd7Mq6ayeuWqy5Ns=",
+      "permissions": [],
+      "master": true
+    }
+  ]
+}

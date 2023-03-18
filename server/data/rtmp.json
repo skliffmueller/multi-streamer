@@ -1,0 +1,20 @@
+{
+  "db": "rtmp-push",
+  "servers": [
+    {
+      "name": "Youtube",
+      "activated": true,
+      "url": "rtmp://a.rtmp.youtube.com/live2/p1yv-a52j-92r0-xv90-3yw5"
+    },
+    {
+      "name": "Twitch",
+      "activated": true,
+      "url": "rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW"
+    },
+    {
+      "name": "Test",
+      "activated": true,
+      "url": "rtmp://localhost"
+    }
+  ]
+}
