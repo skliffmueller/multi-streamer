@@ -1,10 +1,13 @@
 const restify = require('restify');
 const qset = require('q-set');
 const middleware = require('../middleware');
+const startBroadcastServer = require('./broadcaster');
 
 const serverOptions = {
   name: 'API Server'
 };
+
+startBroadcastServer();
 
 const server = restify.createServer(serverOptions);
 

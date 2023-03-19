@@ -31,16 +31,7 @@ const feedsDb = require('../../../lib/feeds-db')
   reset: '0'
 }
 */
-async function index(req, res) {
-  const { app, name } = req.body;
-
-  if(app !== "live") {
-    res.json(403, {
-      blocked: true,
-    });
-    return;
-  }
-
+async function live(req, res) {
   const feeds = await feedsDb.getRawFeeds();
   const foundFeed = feeds.find((feed) => (feed.key === name));
 
@@ -50,10 +41,41 @@ async function index(req, res) {
     });
     return;
   }
-  console.log(foundFeed);
+
   res.json(200, {
     ok: true,
   });
+}
+
+async function broadcast(req, res) {
+  const feeds = await feedsDb.getRawFeeds();
+  const foundFeed = feeds.find((feed) => (feed.broadcast && foundFeed.activated));
+
+  if(!foundFeed) {
+    res.json(403, {
+      blocked: true,
+    });
+    return;
+  }
+
+  res.json(200, {
+    ok: true,
+  });
+}
+
+async function index(req, res) {
+  const { app, name, call } = req.body;
+  switch(app) {
+    case "live":
+      return live(req, res);
+    case "broadcast":
+      return broadcast(req, res);
+  }
+
+  res.json(403, {
+    blocked: true,
+  });
+  return;
 }
 
 module.exports = {

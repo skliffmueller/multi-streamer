@@ -58,8 +58,10 @@ RUN mkdir /var/www/html/videos && \
     chmod -R 755 /var/app && \
     mkdir /var/scripts && \
     chown -R nobody:root /var/scripts && \
-    chmod -R 755 /var/scripts
-
+    chmod -R 755 /var/scripts && \
+    mkdir /tmp/hls && \
+    chown -R nobody:root /tmp/hls && \
+    chmod -R 755 /tmp/hls
 
 
 COPY ./server /var/app
@@ -73,6 +75,6 @@ COPY start.sh /
 
 RUN chmod 755 /start.sh && chmod -R 755 /var/scripts
 
-VOLUME ["/etc/ssl", "/var/www/html/thumbs", "/var/www/html/videos", "/var/app/data"]
+VOLUME ["/etc/ssl", "/var/www/html/thumbs", "/var/www/html/videos", "/var/app/data", "/tmp/hls"]
 
 ENTRYPOINT ["/bin/sh", "/start.sh"]

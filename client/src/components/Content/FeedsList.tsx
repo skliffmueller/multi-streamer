@@ -71,8 +71,8 @@ function Item({ feed, onClick }:{ feed: FeedItem, onClick:() => void }) {
     return (
         <li className={`${defaultItemClasses}`} onClick={onClick}>
             <div className="w-48">
-                {application && <img className="w-full" src={imageSrc} />}
-                {!application && (
+                {application && application.publishing && <img className="w-full" src={imageSrc} />}
+                {(!application || !application.publishing) && (
                     <div className="flex justify-center items-center w-120px h-68px border border-gray-400">
                         <VideoCameraSlashIcon className="w-10 h-10" />
                     </div>
@@ -81,12 +81,12 @@ function Item({ feed, onClick }:{ feed: FeedItem, onClick:() => void }) {
             <div className="mx-2 w-full">
                 <h3 className="flex justify-between">
                     <span className="underline">{feed.name}</span>
-                    {application && broadcast && <div className="text-sm bg-red-700 rounded-full inline-block px-2">LIVE</div>}
-                    {application && !broadcast && <div className="text-sm bg-emerald-700 rounded-full inline-block px-2">READY</div>}
-                    {!application && activated && <div className="text-sm bg-sky-600 rounded-full inline-block px-2">OPEN</div>}
-                    {!application && !activated && <div className="text-sm bg-gray-600 rounded-full inline-block px-2">DISABLED</div>}
+                    {application && application.publishing && broadcast && <div className="text-sm bg-red-700 rounded-full inline-block px-2">LIVE</div>}
+                    {application && application.publishing && !broadcast && <div className="text-sm bg-emerald-700 rounded-full inline-block px-2">READY</div>}
+                    {(!application || !application.publishing) && activated && <div className="text-sm bg-sky-600 rounded-full inline-block px-2">OPEN</div>}
+                    {(!application || !application.publishing) && !activated && <div className="text-sm bg-gray-600 rounded-full inline-block px-2">DISABLED</div>}
                 </h3>
-                {application && (<h4 className="text-sm text-gray-400">
+                {application && application.publishing && (<h4 className="text-sm text-gray-400">
                     <div className="flex justify-between items-center">
                         <div>{secondsToTime(application.time/1000)}</div>
                         <div>{humanReadableBytes(application.bytesIn)} / {humanReadableBytes(application.bytesOut)}</div>
@@ -100,7 +100,7 @@ function Item({ feed, onClick }:{ feed: FeedItem, onClick:() => void }) {
                         <div>{application.channels == 1 ? "Mono" : "Stereo"} {(application.sampleRate/1000).toFixed(1)}khz</div>
                     </div>
                 </h4>)}
-                {!application && (<h4 className="text-sm text-gray-400">
+                {(!application || !application.publishing) && (<h4 className="text-sm text-gray-400">
                     <span>{broadcast && "(Auto Broadcast)"}</span><br />
                     &nbsp;
                 </h4>)}

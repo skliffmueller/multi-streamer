@@ -2,6 +2,8 @@ const { spawn } = require('node:child_process');
 const fs = require('node:fs/promises');
 const path = require('path');
 const crypto = require('crypto');
+const broadcaster = require("./broadcaster");
+const platformDb = require('./platform-db');
 const { JSDOM } = require('jsdom');
 
 const axios = require('axios').create({
@@ -149,6 +151,7 @@ class FeedsDb {
         }
 
         this.data.feeds = this.data.feeds.filter(feed => feed.name !== name);
+
         await this.write();
         return await this.getFeeds();
     }
@@ -157,21 +160,16 @@ class FeedsDb {
 }
 const db = new FeedsDb();
 
-const statsRequest = () => {
+setInterval(() => {
     axios.get('/stats')
         .then((response) => {
-            if(response.status == 200) {
+            if(response.status === 200) {
                 db.setApplications(parseXML(response.data));
             }
-        })
-        .catch((e) => {
-            console.error(e);
-        });
-}
+        }).catch(e => {
 
-setInterval(() => {
-    statsRequest();
-}, 1000);
+    });
+}, 1400);
 
 
 
