@@ -61,8 +61,10 @@ RUN mkdir /var/www/html/videos && \
     chmod -R 755 /var/scripts && \
     mkdir /tmp/hls && \
     chown -R nobody:root /tmp/hls && \
-    chmod -R 755 /tmp/hls
-
+    chmod -R 755 /tmp/hls && \
+    mkdir /var/nginx-configs && \
+    chown -R nobody:root /var/nginx-configs && \
+    chmod -R 755 /var/nginx-configs
 
 COPY ./server /var/app
 
@@ -75,6 +77,6 @@ COPY start.sh /
 
 RUN chmod 755 /start.sh && chmod -R 755 /var/scripts
 
-VOLUME ["/etc/ssl", "/var/www/html/thumbs", "/var/www/html/videos", "/var/app/data", "/tmp/hls"]
+VOLUME ["/etc/ssl", "/var/www/html/thumbs", "/var/www/html/videos", "/var/app/data", "/var/nginx-configs", "/tmp/hls"]
 
 ENTRYPOINT ["/bin/sh", "/start.sh"]

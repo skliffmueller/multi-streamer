@@ -164,7 +164,8 @@ setInterval(() => {
     axios.get('/stats')
         .then((response) => {
             if(response.status === 200) {
-                db.setApplications(parseXML(response.data));
+                const stuff = parseXML(response.data);
+                db.setApplications(stuff);
             }
         }).catch(e => {
 

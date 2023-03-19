@@ -32,6 +32,7 @@ const feedsDb = require('../../../lib/feeds-db')
 }
 */
 async function live(req, res) {
+  const { app, name, call } = req.body;
   const feeds = await feedsDb.getRawFeeds();
   const foundFeed = feeds.find((feed) => (feed.key === name));
 
@@ -48,10 +49,11 @@ async function live(req, res) {
 }
 
 async function broadcast(req, res) {
+  const { app, name, call } = req.body;
   const feeds = await feedsDb.getRawFeeds();
-  const foundFeed = feeds.find((feed) => (feed.broadcast && foundFeed.activated));
-
-  if(!foundFeed) {
+  const foundFeed = feeds.find((feed) => (feed.key === name));
+  console.log(req.body, foundFeed);
+  if(!foundFeed || !foundFeed.broadcast || !foundFeed.activated) {
     res.json(403, {
       blocked: true,
     });
@@ -67,9 +69,11 @@ async function index(req, res) {
   const { app, name, call } = req.body;
   switch(app) {
     case "live":
-      return live(req, res);
+      await live(req, res);
+      return;
     case "broadcast":
-      return broadcast(req, res);
+      await broadcast(req, res);
+      return;
   }
 
   res.json(403, {
