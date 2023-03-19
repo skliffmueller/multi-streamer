@@ -1,6 +1,6 @@
 {
-  "db": "rtmp-push",
-  "servers": [
+  "db": "platforms",
+  "platforms": [
     {
       "name": "Youtube",
       "activated": true,
@@ -15,6 +15,11 @@
       "name": "Test",
       "activated": true,
       "url": "rtmp://localhost"
+    },
+    {
+      "name": "Another",
+      "activated": false,
+      "url": "rtmp://asdasd:2123/test/live"
     }
   ]
 }

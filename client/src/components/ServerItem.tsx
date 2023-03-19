@@ -1,6 +1,6 @@
 
 import React, {ReactNode, useEffect, useState} from 'react';
-import { StreamApplication } from '../providers/stream';
+import { StreamApplication } from '../providers/platforms';
 import { DocumentDuplicateIcon } from "@heroicons/react/24/solid";
 
 const KB = 1024;

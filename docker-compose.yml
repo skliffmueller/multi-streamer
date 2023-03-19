@@ -5,7 +5,10 @@ services:
     image: "nginx_rtmp:latest"
     volumes:
       - "./server:/var/app"
+      - "./server/data:/var/app/data"
       - "./dist:/var/www/html"
+      - "./dist/thumbs:/var/www/html/thumbs"
+      - "./dist/videos:/var/www/html/videos"
     ports:
       - "80:80"
       - "443:443"

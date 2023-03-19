@@ -1,28 +1,27 @@
 import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
 
-import {FeedItem, FeedContext, FeedUpdateItem} from "./context";
+import {UsersContext, UsersItem, UsersUpdateItem} from "./context";
+
 
 export * from "./context";
 
-interface FeedProviderProps {
+interface UsersProviderProps {
     children: React.ReactNode | React.ReactElement | null;
-    feedsUrl: string;
+    usersUrl: string;
     token: string;
 }
 
+const UsersProvider = (props: UsersProviderProps) => {
+    const { children, usersUrl, token } = props;
 
-const FeedProvider = (props: FeedProviderProps) => {
-    const { children, feedsUrl, token } = props;
-
-    const [single, setSingle] = useState<FeedItem | null>(null);
-    const [list, setList] = useState<FeedItem[]>([]);
+    const [single, setSingle] = useState<UsersItem | null>(null);
+    const [list, setList] = useState<UsersItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
-    useEffect(() => {
-        const getFeeds = () => {
-            setLoading(true);
-            fetch(feedsUrl, {
+    const getUsers = () => {
+        setLoading(true);
+        fetch(usersUrl, {
                 credentials: 'same-origin',
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -31,37 +30,34 @@ const FeedProvider = (props: FeedProviderProps) => {
                 .then((response) => response.json())
                 .then((json) => {
                     setLoading(false);
-                    setList(json.result as FeedItem[]);
+                    setList(json.result as UsersItem[]);
+                    setSingle(null);
                 })
                 .catch((e) => {
                     setLoading(false);
                     console.error(e);
                 });
-        }
-        const interval = setInterval(() => {
-            getFeeds();
-        }, 2000);
-        getFeeds();
-        return () => {
-            clearInterval(interval);
-        }
+    }
+
+    useEffect(() => {
+        getUsers();
     }, [token]);
 
-    const createFeed = useCallback((feed: FeedItem) => {
+    const createUser = useCallback((user: UsersItem) => {
         setLoading(true);
-        fetch(feedsUrl, {
+        fetch(usersUrl, {
             method: "POST",
             credentials: "same-origin",
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(feed),
+            body: JSON.stringify(user),
         })
             .then((response) => response.json())
             .then((json) => {
                 setLoading(false);
-                setList(json.result as FeedItem[]);
+                setList(json.result as UsersItem[]);
                 setSingle(null);
             })
             .catch((e) => {
@@ -70,50 +66,21 @@ const FeedProvider = (props: FeedProviderProps) => {
             });
     }, [token]);
 
-    const updateFeed = useCallback((feed: FeedUpdateItem) => {
+    const updateUser = useCallback((user: UsersUpdateItem) => {
         setLoading(true);
-        fetch(feedsUrl, {
+        fetch(usersUrl, {
             method: "PUT",
             credentials: "same-origin",
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(feed),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                const feeds = json.result as FeedItem[];
-                setLoading(false);
-                setList(feeds);
-                if(feed.activated !== undefined) {
-                    const newSingle = feeds.find((feed) => (feed.name === single.name));
-                    setSingle(newSingle);
-                } else {
-                    setSingle(null);
-                }
-            })
-            .catch((e) => {
-                setLoading(false);
-                console.error(e);
-            });
-    }, [token, single]);
-
-    const removeFeed = useCallback((feed: FeedUpdateItem) => {
-        setLoading(true);
-        fetch(feedsUrl, {
-            method: "DELETE",
-            credentials: "same-origin",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(feed),
+            body: JSON.stringify(user),
         })
             .then((response) => response.json())
             .then((json) => {
                 setLoading(false);
-                setList(json.result as FeedItem[]);
+                setList(json.result as UsersItem[]);
                 setSingle(null);
             })
             .catch((e) => {
@@ -122,12 +89,35 @@ const FeedProvider = (props: FeedProviderProps) => {
             });
     }, [token]);
 
-    const value = { single, setSingle, createFeed, updateFeed, removeFeed, list, loading, error };
+    const removeUser = useCallback((user: UsersUpdateItem) => {
+        setLoading(true);
+        fetch(usersUrl, {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user),
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                setLoading(false);
+                setList(json.result as UsersItem[]);
+                setSingle(null);
+            })
+            .catch((e) => {
+                setLoading(false);
+                console.error(e);
+            });
+    }, [token]);
+
+    const value = { getUsers, createUser, updateUser, removeUser, single, setSingle, list, loading, error };
 
     return (
-        <FeedContext.Provider value={value}>
+        <UsersContext.Provider value={value}>
             {children}
-        </FeedContext.Provider>
+        </UsersContext.Provider>
     );
 };
-export default FeedProvider;
+export default UsersProvider;

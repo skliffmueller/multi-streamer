@@ -10,9 +10,14 @@ export type RecordingsItem = {
     flv: string;
 };
 
+export type RecordingsUpdateItem = {
+    name: string;
+};
+
 interface RecordingsContextStruct {
-    setSingle: (recording: RecordingsItem) => void;
+    setSingle: (recording: RecordingsItem | null) => void;
     getRecordings: () => void;
+    removeRecording: (recording: RecordingsUpdateItem) => void;
     single: RecordingsItem | null;
     list: RecordingsItem[];
     loading: boolean;
@@ -20,8 +25,9 @@ interface RecordingsContextStruct {
 }
 
 export const RecordingsContext = createContext<RecordingsContextStruct>({
-    setSingle: () => {},
-    getRecordings: () => {},
+    setSingle: () => {return;},
+    getRecordings: () => {return;},
+    removeRecording: () => {return;},
     single: null,
     list: [],
     loading: false,

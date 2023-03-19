@@ -1,0 +1,8 @@
+        application stream {
+            live        on;
+            record      off;
+
+            push        rtmp://a.rtmp.youtube.com/live2/p1yv-a52j-92r0-xv90-3yw5;
+            push        rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW;
+
+        }

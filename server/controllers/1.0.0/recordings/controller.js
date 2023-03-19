@@ -112,10 +112,22 @@ async function index(req, res) {
   });
 }
 
+const regexMatch = /^(.*-[0-9]{2}-[a-zA-Z]{3}-[0-9]{2}-[0-9]{2}\:[0-9]{2}\:[0-9]{2})(-[0-9]{6})?\.(jpg|flv|mp4)$/;
+
 async function remove(req, res) {
-  res.json(200, {
-    result: [],
+  const dirList = await fs.readdir('/var/www/html/videos');
+  const files = dirList.filter((item) => {
+    const matches = item.match(regexMatch);
+    return matches && matches[1] === req.body.name;
   });
+
+  for(const file of files) {
+    try {
+      await fs.rm(`/var/www/html/videos/${file}`)
+    } catch(e) {}
+  }
+
+  return index(req, res);
 }
 
 module.exports = {

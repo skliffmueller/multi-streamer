@@ -1,4 +1,5 @@
 import React, {createContext, useContext} from "react";
+import {PlatformsItem, PlatformsUpdateItem} from "../platforms";
 
 export type FeedApplication = {
     app: string;
@@ -15,20 +16,29 @@ export type FeedApplication = {
     sampleRate: number;
     channels: number;
     audioCodec: string;
-    
+
     publishing: boolean;
     active: boolean;
 };
 
 export type FeedItem = {
     name: string;
+    broadcast: boolean;
     activated: boolean;
     key: string;
-    application: FeedApplication | null;
+    application?: FeedApplication | null;
 };
-
+export type FeedUpdateItem = {
+    name: string;
+    broadcast?: boolean;
+    activated?: boolean;
+    key?: string;
+};
 interface FeedContextStruct {
-    setSingle: (feed: FeedItem) => void;
+    setSingle: (feed: FeedItem | null) => void;
+    createFeed: (platform: FeedItem) => void;
+    updateFeed: (platform: FeedUpdateItem) => void;
+    removeFeed: (platform: FeedUpdateItem) => void;
     single: FeedItem | null;
     list: FeedItem[];
     loading: boolean;
@@ -36,7 +46,10 @@ interface FeedContextStruct {
 }
 
 export const FeedContext = createContext<FeedContextStruct>({
-    setSingle: () => {},
+    setSingle: () => {return;},
+    createFeed: () => {return;},
+    updateFeed: () => {return;},
+    removeFeed: () => {return;},
     single: null,
     list: [],
     loading: false,

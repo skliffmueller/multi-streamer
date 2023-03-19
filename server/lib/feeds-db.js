@@ -1,3 +1,4 @@
+const { spawn } = require('node:child_process');
 const fs = require('node:fs/promises');
 const path = require('path');
 const crypto = require('crypto');
@@ -48,7 +49,11 @@ function parseXML(data) {
 
 
 
+/*
 
+INPUT=rtmp://localhost:1935/live/tommy-123
+STREAMS="[f=flv:onfail=ignore]rtmp://a.rtmp.youtube.com/live2/p1yv-a52j-92r0-xv90-3yw5|[f=flv:onfail=ignore]rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW"
+ */
 
 class FeedsDb {
     constructor(dbPath) {
@@ -60,6 +65,7 @@ class FeedsDb {
         }
         this.applications = [];
         this.read();
+        this.childProcess = null;
     }
     async read() {
         try {
@@ -74,6 +80,9 @@ class FeedsDb {
     }
     async setApplications(applications) {
         this.applications = applications;
+
+        // const feeds = await this.getFeeds();
+        // const foundFeed = feeds.find((feed) => (feed.application && feed.broadcast));
     }
     async getFeeds() {
         return this.data.feeds.map((feed) => {
@@ -105,11 +114,12 @@ class FeedsDb {
             key,
         });
         await this.write();
-        return this.data.feeds;
+        return await this.getFeeds();
     }
     async updateFeed({
         name,
         activated,
+        broadcast,
         key,
     }) {
         const foundFeedIndex = this.data.feeds.findIndex(feed => (feed.name === name));
@@ -121,38 +131,15 @@ class FeedsDb {
         if(activated !== undefined) {
             this.data.feeds[foundFeedIndex].activated = !!activated;
         }
+        if(broadcast !== undefined) {
+            this.data.feeds = this.data.feeds.map(feed => ({...feed, broadcast: false}));
+            this.data.feeds[foundFeedIndex].broadcast = !!broadcast;
+        }
         if(key) {
             this.data.feeds[foundFeedIndex].key = key;
         }
         await this.write();
-        return this.data.feeds;
-    }
-    async broadcastFeed({
-        name,
-        broadcast,
-    }) {
-        const foundFeedIndex = this.data.feeds.findIndex(feed => (feed.name === name));
-
-        if(foundFeedIndex === -1) {
-            throw Error("Feed not found");
-        }
-        if(broadcast) {
-            this.data.feeds = this.data.feeds.map((feed, index) => {
-                if(foundFeedIndex === index) {
-                    feed.broadcast = true;
-                } else {
-                    feed.broadcast = false;
-                }
-                return feed;
-            });
-        } else {
-            this.data.feeds = this.data.feeds.map((feeds) => {
-                feed.broadcast = false;
-                return feed;
-            });
-        }
-        await this.write();
-        return this.data.feeds[foundFeedIndex];
+        return await this.getFeeds();
     }
     async removeFeed(name) {
         const foundFeed = this.data.feeds.find(feed => (feed.name === name));
@@ -163,7 +150,7 @@ class FeedsDb {
 
         this.data.feeds = this.data.feeds.filter(feed => feed.name !== name);
         await this.write();
-        return this.data.feeds;
+        return await this.getFeeds();
     }
 
 

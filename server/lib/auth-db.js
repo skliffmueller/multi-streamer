@@ -53,16 +53,17 @@ class AuthDb {
     async addUser({
         username,
         password,
-        permissions
+        permissions,
+        master,
     }) {
         username = username.toLowerCase();
         password = generatePassword(password);
 
-        if(!permissions || !permissions.length) {
+        if(!permissions || !Array.isArray(permissions)) {
             throw Error("Permissions not set");
         }
 
-        if(username.length < 6) {
+        if(username.length < 2) {
             throw Error("Username requires minimum 6 characters")
         }
 
@@ -74,7 +75,7 @@ class AuthDb {
             username,
             password,
             permissions,
-            master: false,
+            master,
         });
         await this.write();
         return await this.getUsers();
@@ -112,9 +113,9 @@ class AuthDb {
         if(!foundUser) {
             throw Error("Username does not exist");
         }
-        if(foundUser.master) {
-            throw Error("Cannot remove master account");
-        }
+        // if(foundUser.master) {
+        //     throw Error("Cannot remove master account");
+        // }
 
         this.data.users = this.data.users.filter(user => user.username !== username);
         this.sessions = this.sessions.filter(session => (session.username !== username));

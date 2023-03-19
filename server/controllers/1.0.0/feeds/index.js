@@ -25,8 +25,6 @@ function mount(server) {
 
   server.put({path: '/api/feeds', version: '1.0.0'}, [authorizedRoute, controller.update]);
 
-  server.patch({path: '/api/feeds', version: '1.0.0'}, [authorizedRoute, controller.broadcast]);
-
   server.del({path: '/api/feeds', version: '1.0.0'}, [authorizedRoute, controller.remove]);
 
 }

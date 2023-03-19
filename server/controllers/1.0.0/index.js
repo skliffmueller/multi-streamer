@@ -2,7 +2,7 @@
 
 const recordings = require('./recordings')
 const users = require('./users')
-const servers = require('./servers')
+const platforms = require('./platforms')
 const nginx = require('./nginx')
 const feeds = require('./feeds')
 
@@ -13,7 +13,7 @@ function mount(server) {
   feeds.mount(server)
   recordings.mount(server)
   users.mount(server)
-  servers.mount(server)
+  platforms.mount(server)
 }
 
 module.exports = {

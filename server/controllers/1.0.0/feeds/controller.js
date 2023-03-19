@@ -78,49 +78,17 @@ async function update(req, res) {
     const activated = typeof req.body.activated === "string" 
       ? (req.body.activated === "true" || req.body.activated === "1")
       : (!!req.body.activated);
-    updateQuery.activated = req.body.activated;
+    updateQuery.activated = activated;
+  } else if(req.body.broadcast !== undefined) {
+    const broadcast = typeof req.body.broadcast === "string"
+        ? (req.body.broadcast === "true" || req.body.broadcast === "1")
+        : (!!req.body.broadcast);
+    updateQuery.broadcast = broadcast;
   }
 
   try {
     res.json(200, {
       result: await feedsDb.updateFeed(updateQuery),
-    });
-  } catch(e) {
-    res.json(403, {
-      error: "UNAUTHORIZED",
-      description: "Permission Denied",
-    });
-  }
-}
-
-async function broadcast(req, res) {
-  if(req.body.name === undefined || typeof req.body.name !== "string") {
-    res.json(422, {
-      error: "VALIDATION_ERROR",
-      description: "Name is required",
-    });
-    return;
-  }
-  if(req.body.broadcast === undefined || typeof req.body.broadcast !== "boolean") {
-    res.json(422, {
-      error: "VALIDATION_ERROR",
-      description: "broadcast is required",
-    });
-    return;
-  }
-
-  let updateQuery = { name: req.body.name };
-
-  try {
-    const feed = await feedsDb.updateFeed(updateQuery);
-
-    // if feed.broadcast === true
-      // Start ffmpeg cli
-    // else
-      // Search and stop ffmpeg
-
-    res.json(200, {
-      result: feed
     });
   } catch(e) {
     res.json(403, {
@@ -155,6 +123,5 @@ module.exports = {
   index,
   create,
   update,
-  broadcast,
   remove,
 };

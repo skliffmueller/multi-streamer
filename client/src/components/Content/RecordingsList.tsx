@@ -2,6 +2,8 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import { DocumentDuplicateIcon, ArrowPathIcon, ExclamationTriangleIcon, PhotoIcon } from "@heroicons/react/24/solid";
 import { useRecordingsContext } from '../../providers/recordings';
+import EditPlatform from "../UI/EditPlatform";
+import ViewRecording from "../UI/ViewRecording";
 
 // const KB = 1024;
 // const MB = KB * 1024;
@@ -149,7 +151,7 @@ function dateFormater(date: Date) {
 }
 
 function RecordingsList() {
-    const { getRecordings, single, setSingle, list, loading, error } = useRecordingsContext();
+    const { getRecordings, removeRecording, single, setSingle, list, loading, error } = useRecordingsContext();
 
     const refreshActiveClasses = loading ? "animate-spin" : "";
 
@@ -161,7 +163,7 @@ function RecordingsList() {
         <>
             <ul className="w-full h-full overflow-x-hidden overflow-y-scroll text-gray-200 flex flex-col items-center bg-gray-800">
                 {list.map((recording) => (
-                    <li className={`${defaultItemClasses}`}>
+                    <li className={`${defaultItemClasses}`} onClick={() => (!recording.live && setSingle(recording))}>
                         <div className="w-48">
                             {recording.thumb && <img className="w-full" src={`/videos/${recording.thumb}`} />}
                             {!recording.thumb && (
@@ -186,10 +188,7 @@ function RecordingsList() {
                     </li>
                 ))}
             </ul>
-            <button className="absolute flex bottom-2 right-6 p-2 m-2 rounded-full bg-gray-800 border border-slate-700 shadow-lg" onClick={getRecordings}>
-                { !error && <ArrowPathIcon className={`inline-block w-8 h-8 ${refreshActiveClasses}`} /> }
-                { error && <ExclamationTriangleIcon className={`inline-block w-8 h-8`} /> }
-            </button>
+            {single && <ViewRecording recording={single} onRemoveSave={removeRecording} onCancel={() => setSingle(null)} />}
         </>
 
     );

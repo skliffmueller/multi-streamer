@@ -1,11 +1,11 @@
-const rtmpDb = require('../../../lib/rtmp-db')
+const platformDb = require('../../../lib/platform-db')
 
 //Must have 6 - 16 characters, must be have a least a number and one special character
-const regularExpression = /^[a-zA-Z0-9_-]{6,32}$/;
+const regularExpression = /^([a-zA-Z0-9_-]|\s){6,32}$/;
 
 async function index(req, res) {
   res.json(200, {
-    result: await rtmpDb.getServers(),
+    result: await platformDb.getPlatforms(),
   });
 }
 
@@ -38,7 +38,7 @@ async function create(req, res) {
           : (!!req.body.activated);
   try {
     res.json(201, {
-      result: await rtmpDb.addServer({
+      result: await platformDb.addPlatform({
         name: req.body.name,
         activated,
         url: req.body.url,
@@ -83,7 +83,7 @@ async function update(req, res) {
 
   try {
     res.json(200, {
-      result: await rtmpDb.updateServer(updateQuery),
+      result: await platformDb.updatePlatform(updateQuery),
     });
   } catch(e) {
     res.json(403, {
@@ -104,7 +104,7 @@ async function remove(req, res) {
 
   try {
     res.json(200, {
-      result: await rtmpDb.removeServer(req.body.name),
+      result: await platformDb.removePlatform(req.body.name),
     });
   } catch(e) {
     res.json(403, {

@@ -27,29 +27,28 @@ function Signin() {
         }
     }
 
-    const onSignin = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(username, password);
+    const onSignin = useCallback((event: React.MouseEvent<HTMLFormElement>) => {
+        event.preventDefault();
         login(username, password);
     }, [username, password]);
 
 
     return (
         <div className="absolute top-0 left-0 bottom-0 right-0 w-full h-full flex justify-center items-center bg-opaque-600">
-            <div className="flex flex-col rounded-lg bg-gray-800 p-4 m-4">
+            <form className="flex flex-col rounded-lg bg-gray-800 p-4 m-4" onSubmit={onSignin}>
                 <input className="rounded-lg text-size-lg bg-gray-900 mb-2 px-4 py-2"
-                    name="username"
-                    placeholder="Username"
-                    value={username}
-                    onChange={onUsername} />
+                       name="username"
+                       placeholder="Username"
+                       value={username}
+                       onChange={onUsername} />
                 <input className="rounded-lg text-size-lg bg-gray-900 mb-4 px-4 py-2"
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={onPassword} />
-                <button className="rounded-lg bg-gray-700 px-4 py-2" onClick={onSignin}>Signin</button>
-            </div>
-
+                       name="password"
+                       type="password"
+                       placeholder="Password"
+                       value={password}
+                       onChange={onPassword} />
+                <button type="submit" className="rounded-lg bg-gray-700 px-4 py-2">Signin</button>
+            </form>
         </div>
 
     );

@@ -1,7 +1,7 @@
 const authDb = require('../../../lib/auth-db')
 
 //Must have 6 - 16 characters, must be have a least a number and one special character
-const regularExpression = /^[a-zA-Z0-9_-]{6,32}$/;
+const regularExpression = /^[a-zA-Z0-9_-]{2,32}$/;
 
 async function index(req, res) {
   const users = await authDb.getUsers();
@@ -42,6 +42,7 @@ async function create(req, res) {
         username: req.body.username,
         password: req.body.password,
         permissions: req.body.permissions,
+        master: true,
       }),
     });
   } catch(e) {

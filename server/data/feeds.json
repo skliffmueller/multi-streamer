@@ -1,23 +1,23 @@
 {
-    "db": "feeds",
-    "feeds": [
-      {
-        "name": "Tommy",
-        "broadcast": true,
-        "activated": true,
-        "key": "tommy-123"
-      },
-      {
-        "name": "Cooley",
-        "broadcast": false,
-        "activated": true,
-        "key": "cooley-123"
-      },
-      {
-        "name": "Captain",
-        "broadcast": false,
-        "activated": false,
-        "key": "captain-123"
-      }
-    ]
-  }
+  "db": "feeds",
+  "feeds": [
+    {
+      "name": "Tommy",
+      "broadcast": true,
+      "activated": true,
+      "key": "tommy-123"
+    },
+    {
+      "name": "Cooley",
+      "broadcast": false,
+      "activated": true,
+      "key": "cooley-123"
+    },
+    {
+      "name": "Captain",
+      "broadcast": false,
+      "activated": true,
+      "key": "captain-123"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import React, {ReactNode} from 'react';
 import {NavLink, Route, Routes, useNavigate} from "react-router-dom";
 import { ListBulletIcon, QueueListIcon, EyeIcon, UserIcon, PlayCircleIcon, VideoCameraIcon, FilmIcon } from "@heroicons/react/20/solid"
 
-import StreamProvider, { useStreamContext } from '../providers/stream';
+import StreamProvider, { useStreamContext } from '../providers/platforms';
 import ServerItem from './ServerItem';
 import BroadcastList from './UI/BroadcastList';
 import RecordingsProvider from "../providers/recordings";
@@ -12,6 +12,10 @@ import Signin from './Content/Signin';
 import { useAuthContext } from '../providers/auth';
 import FeedsList from './Content/FeedsList';
 import FeedProvider from '../providers/feed';
+import PlatformsProvider from "../providers/platforms";
+import PlatformsList from "./Content/PlatformsList";
+import UsersProvider from "../providers/users";
+import UsersList from "./Content/UsersList";
 
 
 function Home() {
@@ -37,9 +41,9 @@ function Home() {
                     <FilmIcon className="inline-block w-6 h-6" /><br />
                     Recordings
                 </NavLink>
-                <NavLink to={"/streams"} className={({ isActive }) => `${defaultItemClasses} ${isActive ? "bg-gray-700" : "bg-gray-800"}`}>
+                <NavLink to={"/platforms"} className={({ isActive }) => `${defaultItemClasses} ${isActive ? "bg-gray-700" : "bg-gray-800"}`}>
                     <ListBulletIcon className="inline-block w-6 h-6" /><br />
-                    Streams
+                    Platforms
                 </NavLink>
                 {/* <NavLink to={"/watch"} className={({ isActive }) => `${defaultItemClasses} ${isActive ? "bg-gray-700" : "bg-gray-800"}`}>
                     <EyeIcon className="inline-block w-6 h-6" />
@@ -60,15 +64,16 @@ function Home() {
                         <RecordingsList />
                     </RecordingsProvider>
                 } />
-                {/* <Route path="/streams" element={
-                    <BroadcastList />
-                } />
-                <Route path="/watch" element={
-                    <BroadcastList />
+                <Route path="/platforms" element={
+                    <PlatformsProvider platformsUrl={"/api/platforms"} token={token}>
+                        <PlatformsList />
+                    </PlatformsProvider>
                 } />
                 <Route path="/users" element={
-                    <BroadcastList />
-                } /> */}
+                    <UsersProvider usersUrl={"/api/users"} token={token}>
+                        <UsersList />
+                    </UsersProvider>
+                } />
             </Routes>
         </div>
     );

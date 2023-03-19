@@ -1,28 +1,27 @@
 import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
 
-import {FeedItem, FeedContext, FeedUpdateItem} from "./context";
+import {PlatformsContext, PlatformsItem, PlatformsUpdateItem} from "./context";
+
 
 export * from "./context";
 
-interface FeedProviderProps {
+interface PlatformsProviderProps {
     children: React.ReactNode | React.ReactElement | null;
-    feedsUrl: string;
+    platformsUrl: string;
     token: string;
 }
 
+const PlatformsProvider = (props: PlatformsProviderProps) => {
+    const { children, platformsUrl, token } = props;
 
-const FeedProvider = (props: FeedProviderProps) => {
-    const { children, feedsUrl, token } = props;
-
-    const [single, setSingle] = useState<FeedItem | null>(null);
-    const [list, setList] = useState<FeedItem[]>([]);
+    const [single, setSingle] = useState<PlatformsItem | null>(null);
+    const [list, setList] = useState<PlatformsItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
-    useEffect(() => {
-        const getFeeds = () => {
-            setLoading(true);
-            fetch(feedsUrl, {
+    const getPlatforms = () => {
+        setLoading(true);
+        fetch(platformsUrl, {
                 credentials: 'same-origin',
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -31,37 +30,34 @@ const FeedProvider = (props: FeedProviderProps) => {
                 .then((response) => response.json())
                 .then((json) => {
                     setLoading(false);
-                    setList(json.result as FeedItem[]);
+                    setList(json.result as PlatformsItem[]);
+                    setSingle(null);
                 })
                 .catch((e) => {
                     setLoading(false);
                     console.error(e);
                 });
-        }
-        const interval = setInterval(() => {
-            getFeeds();
-        }, 2000);
-        getFeeds();
-        return () => {
-            clearInterval(interval);
-        }
+    }
+
+    useEffect(() => {
+        getPlatforms();
     }, [token]);
 
-    const createFeed = useCallback((feed: FeedItem) => {
+    const createPlatform = useCallback((platform: PlatformsItem) => {
         setLoading(true);
-        fetch(feedsUrl, {
+        fetch(platformsUrl, {
             method: "POST",
             credentials: "same-origin",
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(feed),
+            body: JSON.stringify(platform),
         })
             .then((response) => response.json())
             .then((json) => {
                 setLoading(false);
-                setList(json.result as FeedItem[]);
+                setList(json.result as PlatformsItem[]);
                 setSingle(null);
             })
             .catch((e) => {
@@ -70,50 +66,21 @@ const FeedProvider = (props: FeedProviderProps) => {
             });
     }, [token]);
 
-    const updateFeed = useCallback((feed: FeedUpdateItem) => {
+    const updatePlatform = useCallback((platform: PlatformsUpdateItem) => {
         setLoading(true);
-        fetch(feedsUrl, {
+        fetch(platformsUrl, {
             method: "PUT",
             credentials: "same-origin",
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(feed),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                const feeds = json.result as FeedItem[];
-                setLoading(false);
-                setList(feeds);
-                if(feed.activated !== undefined) {
-                    const newSingle = feeds.find((feed) => (feed.name === single.name));
-                    setSingle(newSingle);
-                } else {
-                    setSingle(null);
-                }
-            })
-            .catch((e) => {
-                setLoading(false);
-                console.error(e);
-            });
-    }, [token, single]);
-
-    const removeFeed = useCallback((feed: FeedUpdateItem) => {
-        setLoading(true);
-        fetch(feedsUrl, {
-            method: "DELETE",
-            credentials: "same-origin",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(feed),
+            body: JSON.stringify(platform),
         })
             .then((response) => response.json())
             .then((json) => {
                 setLoading(false);
-                setList(json.result as FeedItem[]);
+                setList(json.result as PlatformsItem[]);
                 setSingle(null);
             })
             .catch((e) => {
@@ -122,12 +89,35 @@ const FeedProvider = (props: FeedProviderProps) => {
             });
     }, [token]);
 
-    const value = { single, setSingle, createFeed, updateFeed, removeFeed, list, loading, error };
+    const removePlatform = useCallback((platform: PlatformsUpdateItem) => {
+        setLoading(true);
+        fetch(platformsUrl, {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(platform),
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                setLoading(false);
+                setList(json.result as PlatformsItem[]);
+                setSingle(null);
+            })
+            .catch((e) => {
+                setLoading(false);
+                console.error(e);
+            });
+    }, [token]);
+
+    const value = { getPlatforms, createPlatform, updatePlatform, removePlatform, single, setSingle, list, loading, error };
 
     return (
-        <FeedContext.Provider value={value}>
+        <PlatformsContext.Provider value={value}>
             {children}
-        </FeedContext.Provider>
+        </PlatformsContext.Provider>
     );
 };
-export default FeedProvider;
+export default PlatformsProvider;
