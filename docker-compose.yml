@@ -14,4 +14,6 @@ services:
       - "80:80"
       - "443:443"
       - "1935:1935"
+    environment:
+      - NO_SSL=true
     
