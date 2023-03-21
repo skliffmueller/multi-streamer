@@ -71,15 +71,10 @@ async function index(req, res) {
     case "live":
       await live(req, res);
       return;
-    case "broadcast":
+    default:
       await broadcast(req, res);
       return;
   }
-
-  res.json(403, {
-    blocked: true,
-  });
-  return;
 }
 
 module.exports = {

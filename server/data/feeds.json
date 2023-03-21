@@ -3,13 +3,13 @@
   "feeds": [
     {
       "name": "Tommy",
-      "broadcast": false,
+      "broadcast": true,
       "activated": true,
       "key": "tommy-123"
     },
     {
       "name": "Cooley",
-      "broadcast": true,
+      "broadcast": false,
       "activated": true,
       "key": "cooley-123"
     },

@@ -8,9 +8,9 @@ const fs = require('fs')
 // "rtmp://localhost:1935/live/tommy-123"
 // [f=flv]rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW
 
-function nginxConfigTemplate(urls) {
-    const pushUrls = urls.map(url => `push    ${url};`).join('\n')
-    return `    server {
+function nginxConfigTemplate(platforms) {
+    return `
+    server {
         listen          1935 so_keepalive=off;
         ping            5s;
         ping_timeout    3s;
@@ -34,18 +34,20 @@ function nginxConfigTemplate(urls) {
             on_play         http://localhost:3000/api/nginx;
             on_publish      http://localhost:3000/api/nginx;
         }
-        
-        application broadcast {
-            live            on;
-            record          off;
 
-            on_publish      http://localhost:3000/api/nginx;
+    ${platforms.map(({ name, url }) => (`
+        application ${name} {
+            live                    on;
+            meta                    copy;
+            record                  off;
 
-${pushUrls}
+            on_publish              http://localhost:3000/api/nginx;
+            push                    ${url};
         }
+    `)).join('\n')}
+
     }`;
 }
-
 class BroadcastWorker {
     constructor() {
         this.inputName = "";
@@ -53,7 +55,56 @@ class BroadcastWorker {
         this.currentBroadcastTimeout = false;
         this.currentBroadcastName = "";
         this.currentOutputUrls = [];
+        this.platforms = [];
+        this.processConfigChecksum = "";
+        this.writeNewNginxConfig();
         this.reloadNginxConfig();
+
+    }
+    updatePlatforms(platforms) {
+        const sortedPlatforms = platforms.map((platform) => ({
+            ...platform,
+            name: platform.name.toLowerCase(),
+        })).sort((a, b) => (a.name.localeCompare(b.name)));
+
+        const checksumString = sortedPlatforms.map((platform) => (`${platform.name}:${platform.url}`)).join('|');
+        const newChecksum = BroadcastWorker.generateChecksum(checksumString);
+
+        if(this.processConfigChecksum !== newChecksum) {
+            this.processConfigChecksum = newChecksum;
+            this.platforms = sortedPlatforms;
+            this.writeNewNginxConfig();
+            this.reloadNginxConfig();
+        }
+
+    }
+    writeNewNginxConfig() {
+        const nginxConfig = nginxConfigTemplate(this.platforms);
+        try {
+            fs.rmSync("/var/nginx-configs/push-servers.conf", {force:true});
+        } catch(e) {}
+        fs.writeFileSync("/var/nginx-configs/push-servers.conf", nginxConfig)
+    }
+    reloadNginxConfig() {
+        const nginxProcess = spawn("nginx", [
+            "-s", "stop",
+        ], {
+            detached: true,
+            stdio: "pipe"
+        });
+        nginxProcess.on('close', () => {
+
+        });
+    }
+    static generateChecksum(str) {
+        return crypto
+            .createHash('md5')
+            .update(str, 'utf8')
+            .digest('hex')
+    }
+
+    updateFeed(inputFeed) {
+        this.feed = inputFeed;
     }
     spawnProcess() {
         if(this.currentBroadcastName === "") {
@@ -62,11 +113,16 @@ class BroadcastWorker {
         // create the process attach stuff
         // ffmpeg -analyzeduration 0 -i "rtmp://localhost:1935/live/${name} live=1" -f flv rtmp://localhost:1935/broadcast/${name}
         // ffmpeg -analyzeduration 0 -i "rtmp://localhost:1935/live/tommy-123 live=1" -f flv rtmp://localhost:1935/broadcast/tommy-123
+        const outputUrls = this.platforms.map((platform) => `[f=flv]rtmp://localhost:1935/${platform.name}/${this.currentBroadcastName}`).join('|');
         this.broadcastProcess = spawn("ffmpeg", [
             "-analyzeduration", "0",
-            "-i", `rtmp://localhost:1935/live/${this.currentBroadcastName} live=1`,
-            "-f", "flv",
-            `rtmp://localhost:1935/broadcast/${this.currentBroadcastName}`
+            "-i", `rtmp://localhost:1935/live/${this.currentBroadcastName}`,
+            "-rtmp_live", "live",
+            "-c", "copy",
+            "-f", "tee",
+            "-map", "0:v",
+            "-map", "0:a",
+            outputUrls,
         ], {
             detached: true,
             stdio: "pipe"
@@ -106,13 +162,16 @@ class BroadcastWorker {
     dropPublisher() {
         // http://localhost/control/drop/publisher
         // app=broadcast&name=${name}
-        return axios.get(`/control/drop/publisher?app=broadcast&name=${this.currentBroadcastName}`)
-                    .then((response) => {
-                        if(response.status >= 200 && response.status < 300) {
-                            return response;
-                        }
-                        throw Error(response);
-                    });
+        return axios.get(`/control/drop/publisher?app=${this.platforms[0].name}&name=${this.currentBroadcastName}`)
+            .then((response) => {
+                if(response.status >= 200 && response.status < 300) {
+                    return response;
+                }
+                throw Error(response);
+            }).catch((response) => {
+                return response;
+            });
+
     }
     updateInputName(inputName) {
         this.inputName = inputName;
@@ -132,29 +191,6 @@ class BroadcastWorker {
             }
         }
     }
-    updateOutputUrls(outputUrls) {
-        this.outputUrls = outputUrls
-        if(this.outputUrls.join('') !== this.currentOutputUrls.join('')) {
-            this.currentOutputUrls = this.outputUrls;
-            this.reloadNginxConfig();
-        }
-    }
-    reloadNginxConfig() {
-        const nginxConfig = nginxConfigTemplate(this.currentOutputUrls);
-        try {
-            fs.rmSync("/var/nginx-configs/push-servers.conf", {force:true});
-        } catch(e) {}
-        fs.writeFileSync("/var/nginx-configs/push-servers.conf", nginxConfig)
-        const nginxProcess = spawn("nginx", [
-            "-s", "reload",
-        ], {
-            detached: true,
-            stdio: "pipe"
-        });
-        nginxProcess.on('close', () => {
-
-        });
-    }
 }
 
 module.exports = function() {
@@ -171,7 +207,7 @@ module.exports = function() {
         }
 
         const platforms = await platformDb.getPlatforms();
-        const foundPlatforms = platforms.filter(platform => (platform.activated)).map(platform => (platform.url));
-        worker.updateOutputUrls(foundPlatforms);
+        const foundPlatforms = platforms.filter(platform => (platform.activated));
+        worker.updatePlatforms(foundPlatforms);
     }, 1000);
 };

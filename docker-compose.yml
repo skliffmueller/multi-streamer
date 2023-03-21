@@ -4,6 +4,7 @@ services:
     build: .
     image: "nginx_rtmp:latest"
     volumes:
+      - "./etc/nginx:/etc/nginx"
       - "./server:/var/app"
       - "./server/data:/var/app/data"
       - "./dist:/var/www/html"

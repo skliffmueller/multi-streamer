@@ -9,47 +9,31 @@ interface HoldButtonProps {
 }
 
 function HoldButton(props: HoldButtonProps) {
-    const [seconds, setSeconds] = useState<number>(-1);
-    const timeRef = useRef<number>();
-    const animationRef = useRef<number>();
+    const [tapCount, setTapCount] = useState<number>(3);
 
-    const animate = (time: number) => {
-        if(timeRef.current !== undefined) {
-            const deltaTime = time - timeRef.current;
-            // if(touch) {
-            setSeconds((prevSeconds) => {
-                if(prevSeconds > 0 && prevSeconds <= 2) {
-                    const newSeconds = (prevSeconds - (deltaTime * 0.001));
-                    if(newSeconds <= 0) {
-                        props.onClick();
-                    }
-                    return newSeconds;
-                }
-                return prevSeconds;
-            });
-        }
-        timeRef.current = time;
-        animationRef.current = requestAnimationFrame(animate);
-    }
 
     useEffect(() => {
-        if(!props.disabled) {
-            animationRef.current = requestAnimationFrame(animate);
+        if(tapCount <= 0) {
+            props.onClick();
+            setTapCount(3);
+        } else if(tapCount < 3) {
+            const timeout = setTimeout(() => {
+                setTapCount(3);
+            }, 1000);
             return () => {
-                if(animationRef.current !== undefined) {
-                    cancelAnimationFrame(animationRef.current)
-                }
-            };
+                clearTimeout(timeout);
+            }
         }
-    }, []);
+
+    },[tapCount])
 
     const buttonClasses = "relative rounded-lg px-4 py-2 mb-2";
     const holdClasses = "absolute rounded shadow-lg bottom-full left-1/2 -translate-x-1/2 -translate-y-2 font-bold text-xl px-4 py-2";
 
     return (
-        <button disabled={props.disabled} className={`${buttonClasses} ${props.buttonClasses || "bg-red-700"}`} onMouseDown={() => setSeconds(2)} onMouseUp={() => setSeconds(-1)}>
-            {seconds > 0 && <div className={`${holdClasses} ${props.holdClasses || "bg-red-600"}`}>
-                <span>HOLD {seconds.toFixed(1)}s</span>
+        <button disabled={props.disabled} className={`${buttonClasses} ${props.buttonClasses || "bg-red-700"}`} onClick={() => setTapCount(tapCount - 1)}>
+            {tapCount < 3 && <div className={`${holdClasses} ${props.holdClasses || "bg-red-600"}`}>
+                <span>Tap {tapCount} times</span>
             </div>}
             <span className="text-lg">
                 {props.children}

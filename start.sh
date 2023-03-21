@@ -8,4 +8,9 @@ mkdir /tmp/thumbs
 chmod -R nobody:nogroup /tmp/thumbs
 cd /var/app
 node ./index.js &
-nginx -g 'daemon off;'
+
+while true
+do
+  nginx -g 'daemon off;'
+  sleep 1
+done

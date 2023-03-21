@@ -2,14 +2,24 @@
   "db": "platforms",
   "platforms": [
     {
+      "name": "Twitch",
+      "activated": true,
+      "url": "rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW"
+    },
+    {
       "name": "Youtube",
       "activated": true,
       "url": "rtmp://a.rtmp.youtube.com/live2/p1yv-a52j-92r0-xv90-3yw5"
     },
     {
-      "name": "Twitch",
+      "name": "Odysee",
       "activated": true,
-      "url": "rtmp://dfw.contribute.live-video.net/app/live_73510364_K9Dm0HjghYY7CF75BdHbKtZGNtfWcW"
+      "url": "rtmp://stream.odysee.com/live/54fbe77e5747233dc16271b3e990013323a495c7?d=405469636b795461636b&s=2afda73a230300d30c2784d800253435bcb8a395b0c26816f9c33480b19af9450241692030d9d952fb6e65b812edf455f7856d1db7b1a77c60ac5d9e7b23e5e6&t=1679369917"
+    },
+    {
+      "name": "Rumble",
+      "activated": true,
+      "url": "rtmp://ls8.live.rmbl.ws/slot-20/zr4d-uzor-x02p"
     }
   ]
 }
