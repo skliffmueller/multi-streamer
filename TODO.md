@@ -10,6 +10,10 @@
 - On empty an empty panel, have some simple directions to navigate to Add an item, or inform of there are no items to be loaded.
 - Loader animations? Not entirely important. Tailwindcss has animation classes, and heroicons is installed.
 
+## Feeds Bitrate monitoring
+
+- Feeds UI needs to show current bitrate of stream, this might need to be calculated on the Node.js API
+
 # Node.js API
 
 ??? Honestly I got nothing right now.
@@ -37,4 +41,8 @@ Mixing two feeds, one camera feed, and one OBS overlay feed with a key color (gr
 
 Keying is the process of separating and isolating elements of an image by their color or brightness. It's often done for visual effects (such as to remove green screens), or in color correction (to add warmth just to skin tones).
 
-##
+## SRT + HEVC(H265)
+
+[Nginx SRT](https://github.com/kaltura/nginx-srt-module) should be installed as part of the Dockerfile.
+
+FFmpeg should decode H265 from the nginx SRT connection, and forward it to the RTMP relay as H264.
