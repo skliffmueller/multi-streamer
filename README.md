@@ -12,6 +12,7 @@ You should only need to run these two commands:
 docker-compose build
 docker-compose up
 ```
+
 The server will run on http://localhost/, the node.js api takes a moment to boot, so login might not work immediately. You will know the difference by looking at the docker logs, or inspect the network traffic. The API requests will produce a 502 error code when the Node.js API is offline. And 502 will go away when the Node.js API is online.
 
 When updating an nginx config in `./etc/nginx` You will need to reset the container to take effect, or add/edit/remove a platform to force an nginx server reset.
@@ -26,17 +27,16 @@ The Node.js API server (`./server`) Is ran within the nginx container, and does 
 
 The front end application IS NOT bundled, watched, or hot reloaded on the container. The container mounts `./dist` directory as a volume, and the nginx server, serves the files in that folder. At this point, on your local machine shell prompt, not the docker container, you may navigate into `./client` folder, `npm install` and `npm run dev` to start the webpack watch and reload module. NOTE: Hot reload is not working, it is on the TODO list. You will need to refresh the browser after every code change. You should NOT have to reset the `npm run dev` instance.
 
-
 # Docker Volume Mapping
 
-| Local Directory     | Container Directory       | Description         |
-| ------------------- | ------------------------- | ------------------- |
-| ./etc/nginx         | /etc/nginx                | Nginx Configs       |
-| ./server            | /var/app                  | Node API server     |
-| ./server/data       | /var/app/data             | JSON File Database  |
-| ./dist              | /var/www/html             | Fontend App         |
-| ./dist/thumbs       | /var/www/html/thumbs      | Temp Thumbnails     |
-| ./dist/videos       | /var/www/html/videos      | Recorded Videos     |
+| Local Directory | Container Directory  | Description        |
+| --------------- | -------------------- | ------------------ |
+| ./etc/nginx     | /etc/nginx           | Nginx Configs      |
+| ./server        | /var/app             | Node API server    |
+| ./server/data   | /var/app/data        | JSON File Database |
+| ./dist          | /var/www/html        | Fontend App        |
+| ./dist/thumbs   | /var/www/html/thumbs | Temp Thumbnails    |
+| ./dist/videos   | /var/www/html/videos | Recorded Videos    |
 
 # Production Build and Start
 
@@ -45,3 +45,58 @@ docker build -t <some-image-name> .
 docker run -d -p 80:80 -p 443:443 -p 1935:1935 \
     -v "/some/directory/videos:/var/www/html/videos" -v "/some/directory/data:/var/app/data" <some-image-name>
 ```
+
+# FFMPEG Commands:
+
+Crash course: https://www.youtube.com/watch?v=yieG9DZQ_vM
+
+► Convert container formats:
+ffmpeg -i input.mkv output.mp4
+
+► Convert video and audio codec:
+ffmpeg -i input.mkv -c:v vp9 -c:a libvorbis output.mp4
+
+► Convert only the video codec:
+ffmpeg -i input.mkv -c:v vp9 -c:a copy output.mp4
+
+► Convert only the audio codec:
+ffmpeg -i input.mkv -c:v copy -c:a libvorbis output.mp4
+
+► Reduce Bitrate:
+ffmpeg -i input.mkv -c:a copy -c:v libx264 -b:v 1M output.mp4
+
+► Reduce Framerate:
+ffmpeg -i input.mkv -c:a copy -c:v libx264 -r 24 output.mp4
+
+► Reduce Resolution:
+ffmpeg -i input.mkv -c:a copy -c:v libx264 -s 848x480 output.mp4
+
+► Reduce Bitrate, Framerate, and Resolution:
+ffmpeg -i input.mkv -c:a copy -c:v libx264 -s 848x480 output.mp4
+
+► Trim:
+ffmpeg -i input.mkv -ss 00:00:10 -t 10 output.mkv
+
+► Extract Audio:
+ffmpeg -i input.mkv -vn output.mp3
+
+► Add Audio:
+ffmpeg -i input.mkv -i audio.m4a -map 0:v:0 -map 1:a:0 -c:v copy output.mp4
+
+► Add Audio with Volume Filter:
+ffmpeg -i input.mkv -i audio.m4a -map 0:v:0 -map 1:a:0 -filter:a "volume=0.5" -c:v copy output.mp4
+
+► Reduce Audio Volume:
+ffmpeg -i input.mkv -filter:a "volume=2.0" output.mkv
+
+► Crop:
+ffmpeg -i input.mkv -filter:v "crop=1280:720:0:0" output.mkv
+
+► Watermark:
+ffmpeg -i input.mkv -i watermark.png -filter_complex "overlay=50:50" output.mkv
+
+► Chroma Key:
+ffmpeg -i input.mkv -c:v vp9 -filter:v "chromakey=0x00ff00:0.1:0.2" output.webm
+
+► Overlay Videos:
+ffmpeg -i input.mkv -i input2.mkv -filter_complex "[0:v][1:v] overlay=25:25" output.webm
