@@ -44,7 +44,7 @@ Will need a command to accept a main camera input (rtmp stream) and an overlay i
 
 Using a colorkey filter, we need to remove a selected color from the overlay feed. The selection of this color, will be a hex color code parameter that might need to be changed later. We will also need to change the sensitivity, whatever that may resemble. The output result needs to be a combination of the background main camera input, and the foreground processed overlay input.
 
-There are codec parameters involved in properly decoding h264 input codec (might also be called libx264), and re-encoding the h264 output codec. You can find a lot of presets and configurations (here)[https://trac.ffmpeg.org/wiki/Encode/H.264]
+There are codec parameters involved in properly decoding h264 input codec (might also be called libx264), and re-encoding the h264 output codec. You can find a lot of presets and configurations [here](https://trac.ffmpeg.org/wiki/Encode/H.264) and more detail about each option can be found [here](https://code.videolan.org/videolan/x264/-/blob/master/x264.c#L733)
 
 ## SRT + HEVC(H265)
 
