@@ -36,10 +36,15 @@ There is an example config in `./etc/nginx/nginx-default.conf` how to proxy pass
   
 # Future
 
-## Feed mixer
-Mixing two feeds, one camera feed, and one OBS overlay feed with a key color (green screen), maybe at a lower fps, to be encoded in ffmpeg.
+## Green screen overlay
 
-Keying is the process of separating and isolating elements of an image by their color or brightness. It's often done for visual effects (such as to remove green screens), or in color correction (to add warmth just to skin tones).
+### Phase 1 (ffmpeg cli)
+
+Will need a command to accept a main camera input (rtmp stream) and an overlay input (rtmp stream or mp4). The man camera input will be the layer existing behind the overlay. There will be no processing done directly to the main camera input. The overlay input will exist infront of the main camera input. The overlay input will need some processing.
+
+Using a colorkey filter, we need to remove a selected color from the overlay feed. The selection of this color, will be a hex color code parameter that might need to be changed later. We will also need to change the sensitivity, whatever that may resemble. The output result needs to be a combination of the background main camera input, and the foreground processed overlay input.
+
+There are codec parameters involved in properly decoding h264 input codec (might also be called libx264), and re-encoding the h264 output codec. You can find a lot of presets and configurations (here)[https://trac.ffmpeg.org/wiki/Encode/H.264]
 
 ## SRT + HEVC(H265)
 
