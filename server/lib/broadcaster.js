@@ -23,10 +23,10 @@ function nginxConfigTemplate(platforms) {
             meta        copy;
             wait_key    on;
 
-#             record         all;
-#             record_path    /var/www/html/videos;
-#             record_suffix  -%d-%b-%y-%T.flv;
-#             record_append  on;
+            record         all;
+            record_path    /var/www/html/videos;
+            record_suffix  -%d-%b-%y-%T.flv;
+            record_append  on;
 
             exec_push  ffmpeg -i rtmp://localhost:1935/live/$name -r 0.8 -s 320x180 -update 1 /var/www/html/thumbs/$name.jpg -y;
             exec_record_done /var/scripts/record_done.sh $path $dirname/$basename;
